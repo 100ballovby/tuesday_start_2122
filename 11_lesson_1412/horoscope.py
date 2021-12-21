@@ -3,7 +3,7 @@ import os
 import requests
 
 
-transl_url = 'https://google-translate1.p.rapidapi.com/language/translate/v2/languages'
+transl_url = "https://google-translate20.p.rapidapi.com/translate"
 astro_url = 'https://sameer-kumar-aztro-v1.p.rapidapi.com/'
 
 astro_headers = {
@@ -12,9 +12,9 @@ astro_headers = {
 }
 
 transl_headers = {
-    'accept-encoding': "application/gzip",
-    'x-rapidapi-host': "google-translate1.p.rapidapi.com",
-    'x-rapidapi-key': os.environ.get('GOOGLE_KEY')
+        'content-type': "application/x-www-form-urlencoded",
+        'x-rapidapi-host': "google-translate20.p.rapidapi.com",
+        'x-rapidapi-key': os.environ.get('GOOGLE_KEY')
 }
 
 lang = input('На каком языке вам нужен гороскоп? (es|fr|en|de|am|it|ru|zh)').lower()  # привожу в нижний регистр
@@ -51,11 +51,10 @@ astro_response = requests.post(astro_url,
                                params=astro_query)
 a = astro_response.json()
 a = a['description']
-print(a)
 
-translate_query = f'q={a}&target={lang}&source=en'
+translate_query = f"text={a}&tl={lang}&sl=en"
 
 translate_response = requests.post(transl_url,
                                    data=translate_query,
                                    headers=transl_headers)
-print(translate_response)
+print(translate_response.json())
