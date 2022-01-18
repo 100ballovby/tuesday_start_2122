@@ -1,5 +1,8 @@
 import pygame as pg
 from pygame.draw import circle, rect, polygon
+import time
+
+time.sleep(10)  # ждать 10 секунд
 
 WIN_WIDTH = 640
 WIN_HEIGHT = 480
