@@ -22,8 +22,29 @@ speed = 5
 food_x = round(randrange(0, W - snake_block) / 10) * 10  # случайные координаты появления еды
 food_y = round(randrange(0, H - snake_block) / 10) * 10  # случайные координаты появления еды
 
+pg.font.init()  # чтобы работали надписи на экране
+font_style = pg.font.SysFont('comicsans', 20)  # (название_шрифта, размер_шрифта)
+
 finished = False
+pause = False
 while not finished:
+    while pause:  # пока игра стоит "на паузе"
+        screen.fill(WHITE)
+        message = font_style.render('Нажмите C, чтобы продолжить, или ESC, чтобы выйти', True, BLACK)
+        screen.blit(message, [100, 100])
+        pg.display.update()
+
+        # цикл обработки событий в паузе
+        for pause_event in pg.event.get():
+            if pause_event.type == pg.KEYDOWN:
+                if pause_event.key == pg.K_ESCAPE:  # если нажали ESC, завершить игру
+                    pause = False  # выключить паузу
+                    finished = True  # выключить игру
+                elif pause_event.key == pg.K_c:  # если нажали С, "начать игру заново"
+                    x1 = 100
+                    y1 = 100
+                    pause = False
+
     clock.tick(speed)
     for event in pg.event.get():
         if event.type == pg.QUIT:
@@ -43,7 +64,7 @@ while not finished:
                 y1_change = snake_block
 
     if (x1 >= W or x1 < 0) or (y1 >= H or y1 < 0):  # если коснулись стены
-        finished = True  # остановить игру
+        pause = True  # остановить игру
 
     x1 += x1_change
     y1 += y1_change
