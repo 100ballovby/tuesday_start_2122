@@ -1,5 +1,6 @@
 import pygame as pg
 from pygame.draw import rect, circle, polygon
+from random import randrange  # для случайных координат появления еды
 
 W = 400
 H = 300
@@ -16,7 +17,10 @@ y1 = 200  # змея появляется в этих координатах
 x1_change = 0  # изменение положения змеи в пространстве
 y1_change = 0  # изменение положения змеи в пространстве
 snake_block = 10  # размер змеи
-speed = 30
+speed = 5
+
+food_x = round(randrange(0, W - snake_block) / 10) * 10  # случайные координаты появления еды
+food_y = round(randrange(0, H - snake_block) / 10) * 10  # случайные координаты появления еды
 
 finished = False
 while not finished:
@@ -28,16 +32,27 @@ while not finished:
             if event.key == pg.K_RIGHT:  # pg.K_d  wasd
                 x1_change = snake_block
                 y1_change = 0
-            elif event.key == pg.K_LEFT:
+            elif event.key == pg.K_LEFT:  # pg.K_a
                 x1_change = -snake_block  # сдвигаю змею по горизонтали на расстояние, равное ее размеру
                 y1_change = 0
-            elif event.key == pg.K_UP:
+            elif event.key == pg.K_UP:  # pg.K_w
                 x1_change = 0
                 y1_change = -snake_block  # сдвигаю змею по вертикали на расстояние, равное ее размеру
-            elif event.key == pg.K_DOWN:
+            elif event.key == pg.K_DOWN:  # pg.K_s
                 x1_change = 0
                 y1_change = snake_block
 
+    if (x1 >= W or x1 < 0) or (y1 >= H or y1 < 0):  # если коснулись стены
+        finished = True  # остановить игру
+
+    x1 += x1_change
+    y1 += y1_change
     screen.fill(WHITE)
     rect(screen, BLUE, [x1, y1, snake_block, snake_block])
+    rect(screen, RED, [food_x, food_y, snake_block, snake_block])
     pg.display.update()
+
+    if x1 == food_x and y1 == food_y:
+        print('я поела')
+        food_x = round(randrange(0, W - snake_block) / 10) * 10  # случайные координаты появления еды
+        food_y = round(randrange(0, H - snake_block) / 10) * 10
