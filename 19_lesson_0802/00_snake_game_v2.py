@@ -1,4 +1,5 @@
 import pygame as pg
+import snake as snake
 from pygame.draw import rect, circle, polygon
 from random import randrange  # для случайных координат появления еды
 
@@ -22,16 +23,28 @@ speed = 5
 food_x = round(randrange(0, W - snake_block) / 10) * 10  # случайные координаты появления еды
 food_y = round(randrange(0, H - snake_block) / 10) * 10  # случайные координаты появления еды
 
-pg.font.init()  # чтобы работали надписи на экране
-font_style = pg.font.SysFont('comicsans', 20)  # (название_шрифта, размер_шрифта)
+
+def show_message(text, color, x, y):
+    pg.font.init()  # чтобы работали надписи на экране
+    font_style = pg.font.SysFont('comicsans', 20)  # (название_шрифта, размер_шрифта)
+    message = font_style.render(text, True, color)  # что пишем
+    screen.blit(message, [x, y])    # отображаем на экране текст
+
+
+def snake_draw(block, s_list):
+    for x in s_list:
+        snake = rect(screen, BLUE, [x[0], x[1], block, block])
+    return snake
+
+snake_list = []
+snake_length = 1
 
 finished = False
 pause = False
 while not finished:
     while pause:  # пока игра стоит "на паузе"
         screen.fill(WHITE)
-        message = font_style.render('Нажмите C, чтобы продолжить, или ESC, чтобы выйти', True, BLACK)
-        screen.blit(message, [100, 100])
+        show_message('Нажмите C, чтобы продолжить, или ESC, чтобы выйти', BLACK, 200, 250)
         pg.display.update()
 
         # цикл обработки событий в паузе
@@ -69,11 +82,22 @@ while not finished:
     x1 += x1_change
     y1 += y1_change
     screen.fill(WHITE)
-    rect(screen, BLUE, [x1, y1, snake_block, snake_block])
-    rect(screen, RED, [food_x, food_y, snake_block, snake_block])
+
+    snake_head = []
+    snake_head.append(x1)
+    snake_head.append(y1)
+    snake_list.append(snake_head)
+    if len(snake_list) > snake_length:
+        snake_list.pop(0)
+
+    snake = snake_draw(snake_block, snake_list)
+    food = rect(screen, RED, [food_x, food_y, snake_block, snake_block])
+
+    show_message(f'Your score {snake_length - 1}', BLACK, 0, 0)
+
     pg.display.update()
 
-    if x1 == food_x and y1 == food_y:
-        print('я поела')
+    if snake.colliderect(food):  # если змейка касается еды
+        snake_length += 1  # увеличиваю количество сегментов змеи
         food_x = round(randrange(0, W - snake_block) / 10) * 10  # случайные координаты появления еды
         food_y = round(randrange(0, H - snake_block) / 10) * 10
