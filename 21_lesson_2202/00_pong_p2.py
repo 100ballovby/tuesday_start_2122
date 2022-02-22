@@ -1,5 +1,6 @@
 import pygame as pg
 from pygame.draw import rect, ellipse, aaline
+from random import choice
 
 
 def ball_motion(obj, width, height, plr, enm):
@@ -11,7 +12,7 @@ def ball_motion(obj, width, height, plr, enm):
     if obj.top <= 0 or obj.bottom > height:
         ball_speed_y *= -1
     elif obj.left <= 0 or obj.right > width:
-        ball_speed_x *= -1
+        restart(obj, width, height)
     elif obj.colliderect(plr) or obj.colliderect(enm):
         ball_speed_x *= -1
 
@@ -44,6 +45,20 @@ def opponent_ai(enm, speed, height, obj):
     elif enm.bottom >= height:
         enm.bottom = height
 
+
+def restart(obj, width, height):
+    """
+    Функция перезагрузки игры в момент пропуска мяча одной из платформ
+    :param obj: игровой-объект мяч
+    :param width: ширина экрана
+    :param height: высота экрана
+    :return: None
+    """
+    global ball_speed_x, ball_speed_y
+
+    obj.center = (width // 2, height // 2)
+    ball_speed_x *= choice([-1, 1])  # скорость задается случайным числом из списка -1, 1
+    ball_speed_y *= choice([-1, 1])  # скорость задается случайным числом из списка -1, 1
 
 W = 1280
 H = 960
