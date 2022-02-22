@@ -25,6 +25,26 @@ def player_motion(plr, speed, height):
         plr.bottom = height  # зафиксировать ее нижнюю часть "на полу"
 
 
+def opponent_ai(enm, speed, height, obj):
+    """
+    Функция автоматического передвижения платформы-оппонента
+    :param enm: сама платформа
+    :param speed: скорость передивжения
+    :param height: высота экрана
+    :param obj: игровой объект-мяч
+    :return: None
+    """
+    if enm.top < obj.y:  # если платформа ниже мяча
+        enm.y += speed  # поднять ее
+    elif enm.bottom > obj.y:  # если платформа выше мяча
+        enm.y -= speed  # опустить ее
+
+    if enm.top <= 0:
+        enm.top = 0
+    elif enm.bottom >= height:
+        enm.bottom = height
+
+
 W = 1280
 H = 960
 screen = pg.display.set_mode((W, H))
@@ -42,6 +62,7 @@ opponent = pg.Rect(20, H / 2, 10, 140)
 ball_speed_x = 7
 ball_speed_y = 7
 player_speed = 0
+opponent_speed = 7
 
 finished = False
 while not finished:
@@ -60,6 +81,7 @@ while not finished:
             elif event.key == pg.K_DOWN:
                 player_speed -= 7
 
+    opponent_ai(opponent, opponent_speed, H, ball)
     player_motion(player, player_speed, H)
     ball_motion(ball, W, H, player, opponent)
 
