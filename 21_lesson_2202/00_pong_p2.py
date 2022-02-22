@@ -16,6 +16,15 @@ def ball_motion(obj, width, height, plr, enm):
         ball_speed_x *= -1
 
 
+def player_motion(plr, speed, height):
+    plr.y += speed
+
+    if plr.top <= 0:  # если платформа уперлась "в потолок"
+        plr.top = 0  # зафиксировать ее верхнюю часть "на потолке"
+    elif plr.bottom >= height:  # если платформа уперлась "в пол"
+        plr.bottom = height  # зафиксировать ее нижнюю часть "на полу"
+
+
 W = 1280
 H = 960
 screen = pg.display.set_mode((W, H))
@@ -32,6 +41,7 @@ opponent = pg.Rect(20, H / 2, 10, 140)
 
 ball_speed_x = 7
 ball_speed_y = 7
+player_speed = 0
 
 finished = False
 while not finished:
@@ -39,7 +49,18 @@ while not finished:
     for event in pg.event.get():
         if event.type == pg.QUIT:
             finished = True
+        if event.type == pg.KEYDOWN:  # если кнопку нажали
+            if event.key == pg.K_UP:
+                player_speed -= 7
+            elif event.key == pg.K_DOWN:
+                player_speed += 7
+        if event.type == pg.KEYUP:  # если кнопку отпустили
+            if event.key == pg.K_UP:
+                player_speed += 7
+            elif event.key == pg.K_DOWN:
+                player_speed -= 7
 
+    player_motion(player, player_speed, H)
     ball_motion(ball, W, H, player, opponent)
 
     screen.fill(light_grey)
