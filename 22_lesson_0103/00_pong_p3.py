@@ -1,10 +1,12 @@
+from turtle import width
+
 import pygame as pg
 from pygame.draw import rect, ellipse, aaline
 from random import choice
 
 
 def ball_motion(obj, width, height, plr, enm):
-    global ball_speed_x, ball_speed_y, p_score, o_score
+    global ball_speed_x, ball_speed_y, p_score, o_score, score_time
 
     obj.x += ball_speed_x
     obj.y += ball_speed_y
@@ -14,11 +16,11 @@ def ball_motion(obj, width, height, plr, enm):
         pg.mixer.Sound.play(hit_sound)
     # Counting score
     elif obj.left <= 0:
-        restart(obj, width, height)
+        score_time = pg.time.get_ticks()  # начинаю отсчет времени
         p_score += 1
         pg.mixer.Sound.play(score_sound)
     elif obj.right > width:
-        restart(obj, width, height)
+        score_time = pg.time.get_ticks()  # начинаю отсчет времени
         o_score += 1
         pg.mixer.Sound.play(score_sound)
 
@@ -64,11 +66,27 @@ def restart(obj, width, height):
     :param height: высота экрана
     :return: None
     """
-    global ball_speed_x, ball_speed_y
+    global ball_speed_x, ball_speed_y, ball_moving, score_time
 
-    obj.center = (width // 2, height // 2)
-    ball_speed_x *= choice([-1, 1])  # скорость задается случайным числом из списка -1, 1
-    ball_speed_y *= choice([-1, 1])  # скорость задается случайным числом из списка -1, 1
+    obj.center = (W // 2, H // 2)  # сначала шар переходит в центр
+    current_time = pg.time.get_ticks()  # старт "секундомера"
+
+    if current_time - score_time < 700:
+        n3 = basic_font.render('3', False, cyan)
+        screen.blit(n3, [W // 2, H // 2 + 20])
+    if 700 < current_time - score_time < 1400:
+        n2 = basic_font.render('2', False, cyan)
+        screen.blit(n2, [W // 2, H // 2 + 20])
+    if 1400 < current_time - score_time < 2100:
+        n1 = basic_font.render('1', False, cyan)
+        screen.blit(n1, [W // 2, H // 2 + 20])
+
+    if current_time - score_time < 2100:  # пока не прошло 3 секунды после "гола"
+        ball_speed_y, ball_speed_x = 0, 0  # остановить мяч на месте
+    else:
+        ball_speed_x = 7 * choice([-1, 1])  # скорость задается случайным числом из списка -1, 1
+        ball_speed_y = 7 * choice([-1, 1])  # скорость задается случайным числом из списка -1, 1
+        score_time = None
 
 W = 1280
 H = 960
@@ -88,6 +106,8 @@ ball_speed_x = 7 * choice([-1, 1])
 ball_speed_y = 7 * choice([-1, 1])
 player_speed = 0
 opponent_speed = 7
+ball_moving = False
+score_time = True
 
 # Score text
 pg.font.init()
@@ -126,6 +146,9 @@ while not finished:
     rect(screen, cyan, opponent)  # игрок 2
     ellipse(screen, cyan, ball)  # мячик
     aaline(screen, cyan, [W / 2, 0], [W / 2, H])  # разделительная линия
+
+    if score_time:
+        restart(ball, W, H)
 
     p_text = basic_font.render(f'{p_score}', False, cyan)
     screen.blit(p_text, [W // 2 + 20, H // 2])
