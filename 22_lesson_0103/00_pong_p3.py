@@ -96,6 +96,7 @@ o_score = 0
 basic_font = pg.font.SysFont('Comicsans', 32)
 
 #Sound
+pg.mixer.init()
 hit_sound = pg.mixer.Sound('pong.ogg')
 score_sound = pg.mixer.Sound('score.ogg')
 
