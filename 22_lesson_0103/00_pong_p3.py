@@ -4,15 +4,21 @@ from random import choice
 
 
 def ball_motion(obj, width, height, plr, enm):
-    global ball_speed_x, ball_speed_y
+    global ball_speed_x, ball_speed_y, p_score, o_score
 
     obj.x += ball_speed_x
     obj.y += ball_speed_y
 
     if obj.top <= 0 or obj.bottom > height:
         ball_speed_y *= -1
-    elif obj.left <= 0 or obj.right > width:
+    # Counting score
+    elif obj.left <= 0:
         restart(obj, width, height)
+        p_score += 1
+    elif obj.right > width:
+        restart(obj, width, height)
+        o_score += 1
+
     elif obj.colliderect(plr) or obj.colliderect(enm):
         ball_speed_x *= -1
 
@@ -79,10 +85,15 @@ ball_speed_y = 7 * choice([-1, 1])
 player_speed = 0
 opponent_speed = 7
 
+# Score text
 pg.font.init()
 p_score = 0
 o_score = 0
 basic_font = pg.font.SysFont('Comicsans', 32)
+
+#Sound
+hit_sound = pg.mixer.Sound('pong.ogg')
+score_sound = pg.mixer.Sound('score.ogg')
 
 finished = False
 while not finished:
