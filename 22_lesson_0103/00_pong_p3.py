@@ -11,16 +11,20 @@ def ball_motion(obj, width, height, plr, enm):
 
     if obj.top <= 0 or obj.bottom > height:
         ball_speed_y *= -1
+        pg.mixer.Sound.play(hit_sound)
     # Counting score
     elif obj.left <= 0:
         restart(obj, width, height)
         p_score += 1
+        pg.mixer.Sound.play(score_sound)
     elif obj.right > width:
         restart(obj, width, height)
         o_score += 1
+        pg.mixer.Sound.play(score_sound)
 
     elif obj.colliderect(plr) or obj.colliderect(enm):
         ball_speed_x *= -1
+        pg.mixer.Sound.play(hit_sound)
 
 
 def player_motion(plr, speed, height):
