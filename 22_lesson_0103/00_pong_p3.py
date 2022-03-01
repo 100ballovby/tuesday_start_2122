@@ -74,10 +74,15 @@ ball = pg.Rect(W / 2 - 15, H / 2 - 15, 30, 30)
 player = pg.Rect(W - 20, H / 2, 10, 140)
 opponent = pg.Rect(20, H / 2, 10, 140)
 
-ball_speed_x = 7
-ball_speed_y = 7
+ball_speed_x = 7 * choice([-1, 1])
+ball_speed_y = 7 * choice([-1, 1])
 player_speed = 0
 opponent_speed = 7
+
+pg.font.init()
+p_score = 0
+o_score = 0
+basic_font = pg.font.SysFont('Comicsans', 32)
 
 finished = False
 while not finished:
@@ -105,5 +110,11 @@ while not finished:
     rect(screen, cyan, opponent)  # игрок 2
     ellipse(screen, cyan, ball)  # мячик
     aaline(screen, cyan, [W / 2, 0], [W / 2, H])  # разделительная линия
+
+    p_text = basic_font.render(f'{p_score}', False, cyan)
+    screen.blit(p_text, [W // 2 + 20, H // 2])
+
+    o_text = basic_font.render(f'{o_score}', False, cyan)
+    screen.blit(o_text, [W // 2 - 40, H // 2])
 
     pg.display.update()
