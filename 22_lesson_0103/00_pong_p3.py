@@ -1,5 +1,3 @@
-from turtle import width
-
 import pygame as pg
 from pygame.draw import rect, ellipse, aaline
 from random import choice
