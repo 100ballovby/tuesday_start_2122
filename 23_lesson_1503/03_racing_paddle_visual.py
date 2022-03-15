@@ -1,5 +1,6 @@
 import pygame as pg
 from pygame.draw import rect, aaline
+import random as r
 
 
 def moving(obj, speed, l_side, r_side):
@@ -35,6 +36,7 @@ clock = pg.time.Clock()
 road = pg.Rect(170, 0, 300, H)
 border_left = pg.Rect(130, 0, 40, H)
 border_right = pg.Rect(470, 0, 40, H)
+paddle = pg.Rect(170, -30, 100, 30)
 
 img = pg.image.load('car.png').convert_alpha()  # загружаю и импортирую в проект картинку машины
 img_rect = img.get_rect()  # превращаю картинку в игровой объект
@@ -74,6 +76,7 @@ while not finished:
     rect(screen, SAND, border_left)  # левая обочина
     rect(screen, SAND, border_right)  # правая обочина
     rect(screen, WHITE, [316, 0, 8, H])  # линия разметки дороги
+    rect(screen, RED, paddle)  # препятствие
 
     screen.blit(car, car_rect)  # отображаю картинку с машиной
     rect(screen, (255, 0, 0), img_rect, 1)  # технические блоки, потом удалим
@@ -82,3 +85,14 @@ while not finished:
 
     # Game logic
     moving(car_rect, car_speed, border_left, border_right)
+    paddle.y += 8
+
+    if paddle.top >= H:  # если препятствие упало вниз
+        x = r.randint(1, 3)  # сгенерировать случайное число
+        paddle.y = -40  # поднять препятствие наверх
+        if x == 1:
+            paddle.x = 170  # первая дорожка
+        elif x == 2:
+            paddle.x = 270  # вторая дорожка
+        else:
+            paddle.x = 370  # третья дорожка
