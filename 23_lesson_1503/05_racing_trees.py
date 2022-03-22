@@ -42,11 +42,27 @@ road_width = road.width  # сохраняю ширину дороги
 paddle = pg.Rect(road.x, -30, road_width * 0.3, 30)
 paddle2 = pg.Rect(road.x, paddle.y - H // 2, road_width * 0.3, 30)
 
+# Car
 img = pg.image.load('car.png').convert_alpha()  # загружаю и импортирую в проект картинку машины
 img_rect = img.get_rect()  # превращаю картинку в игровой объект
 img_rect.center = 320, 800
 car = img
 car_rect = img_rect
+
+# Tree
+tree1 = pg.image.load('tree-3.png')
+tree1_rect = tree1.get_rect()
+tree1 = pg.transform.scale(tree1, [W * 0.1, H * 0.2])  # изменяю размер изображения
+# scale(что_изменять, [ширина, высота])
+
+tree2 = pg.image.load('tree-3.png')
+tree2_rect = tree2.get_rect()
+tree2 = pg.transform.scale(tree2, [W * 0.1, H * 0.2])
+
+tree1_rect.x = 10
+tree1_rect.y = 0 - H * 0.2
+tree2_rect.x = W - 90
+tree2_rect.y = 0 - H // 2
 
 car_speed = 0  # начальная скорость машины
 angle = 0  # угол поворота машины
@@ -84,14 +100,14 @@ while not finished:
     rect(screen, RED, paddle2)  # препятствие № 2
 
     screen.blit(car, car_rect)  # отображаю картинку с машиной
-    rect(screen, (255, 0, 0), img_rect, 1)  # технические блоки, потом удалим
-    rect(screen, (0, 255, 0), car_rect, 1)  # технические блоки, потом удалим
+    screen.blit(tree1, tree1_rect)
+    screen.blit(tree2, tree2_rect)
     pg.display.update()
 
     # Game logic
     moving(car_rect, car_speed, border_left, border_right)
-    paddle.y += 8
-    paddle2.y += 8
+    paddle.y += 10
+    paddle2.y += 10
 
     if paddle.top >= H:  # если препятствие упало вниз
         x = r.randint(1, 3)  # сгенерировать случайное число
@@ -111,3 +127,11 @@ while not finished:
         else:
             paddle2.right = road.right  # третья дорожка
         paddle2.y = paddle.y - H // 2  # поднять препятствие наверх
+
+    tree1_rect.y += 10
+    tree2_rect.y += 10
+    if tree1_rect.y >= H:
+        tree1_rect.y = 0 - H * 0.2
+    if tree2_rect.y >= H:
+        tree2_rect.y = 0 - H // 2
+
