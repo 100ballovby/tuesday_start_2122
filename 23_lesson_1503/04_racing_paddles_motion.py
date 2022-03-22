@@ -33,10 +33,14 @@ screen = pg.display.set_mode((W, H))
 clock = pg.time.Clock()
 
 # Game objects
-road = pg.Rect(170, 0, 300, H)
-border_left = pg.Rect(130, 0, 40, H)
-border_right = pg.Rect(470, 0, 40, H)
-paddle = pg.Rect(170, -30, 100, 30)
+road = pg.Rect(0, 0, W // 2, H)
+road.center = W // 2, H // 2
+border_left = pg.Rect(road.x - W * 0.1, 0, W * 0.1, H)
+border_right = pg.Rect(road.right, 0, W * 0.1, H)
+
+road_width = road.width  # сохраняю ширину дороги
+paddle = pg.Rect(road.x, -30, road_width * 0.3, 30)
+paddle2 = pg.Rect(road.x, paddle.y - H // 2, road_width * 0.3, 30)
 
 img = pg.image.load('car.png').convert_alpha()  # загружаю и импортирую в проект картинку машины
 img_rect = img.get_rect()  # превращаю картинку в игровой объект
@@ -55,18 +59,18 @@ while not finished:
             finished = True
         if event.type == pg.KEYDOWN:
             if event.key == pg.K_RIGHT:
-                car_speed += 7
+                car_speed += 10
                 angle = -10
             if event.key == pg.K_LEFT:
-                car_speed -= 7
+                car_speed -= 10
                 angle = 10
             car = pg.transform.rotate(img, angle)
         if event.type == pg.KEYUP:
             if event.key == pg.K_RIGHT:
-                car_speed -= 7
+                car_speed -= 10
                 angle = 0
             if event.key == pg.K_LEFT:
-                car_speed += 7
+                car_speed += 10
                 angle = 0
             car = pg.transform.rotate(img, angle)
 
@@ -75,8 +79,9 @@ while not finished:
     rect(screen, GRAY, road)  # дорога
     rect(screen, SAND, border_left)  # левая обочина
     rect(screen, SAND, border_right)  # правая обочина
-    rect(screen, WHITE, [316, 0, 8, H])  # линия разметки дороги
-    rect(screen, RED, paddle)  # препятствие
+    rect(screen, WHITE, [(W // 2) - (W * 0.01), 0, W * 0.02, H])  # линия разметки дороги
+    rect(screen, RED, paddle)  # препятствие № 1
+    rect(screen, RED, paddle2)  # препятствие № 2
 
     screen.blit(car, car_rect)  # отображаю картинку с машиной
     rect(screen, (255, 0, 0), img_rect, 1)  # технические блоки, потом удалим
@@ -86,13 +91,23 @@ while not finished:
     # Game logic
     moving(car_rect, car_speed, border_left, border_right)
     paddle.y += 8
+    paddle2.y += 8
 
     if paddle.top >= H:  # если препятствие упало вниз
         x = r.randint(1, 3)  # сгенерировать случайное число
-        paddle.y = -40  # поднять препятствие наверх
         if x == 1:
-            paddle.x = 170  # первая дорожка
+            paddle.x = road.x  # первая дорожка
         elif x == 2:
-            paddle.x = 270  # вторая дорожка
+            paddle.center = road.center  # вторая дорожка
         else:
-            paddle.x = 370  # третья дорожка
+            paddle.right = road.right  # третья дорожка
+        paddle.y = -40  # поднять препятствие наверх
+    if paddle2.top >= H:  # если препятствие упало вниз
+        x = r.randint(1, 3)  # сгенерировать случайное число
+        if x == 1:
+            paddle2.x = road.x  # первая дорожка
+        elif x == 2:
+            paddle2.center = road.center  # вторая дорожка
+        else:
+            paddle2.right = road.right  # третья дорожка
+        paddle2.y = paddle.y - H // 2  # поднять препятствие наверх
